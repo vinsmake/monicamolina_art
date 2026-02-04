@@ -104,5 +104,4 @@ dist
 .tern-port
 
 # Build file
-build.html
-images/images.json
+index.html
