@@ -3,7 +3,7 @@ name: Build and Deploy
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   build:
@@ -14,14 +14,19 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '12.x'
+          node-version: '16.x'
       - name: Install dependencies
         run: npm ci
       - name: Build
         run: npm run build
-      - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@v4
+      - name: Commit build
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add -f index.html images/images.json
+          git diff --quiet && git diff --staged --quiet || git commit -m "Build: Generate index.html"
+      - name: Push changes
+        uses: ad-m/github-push-action@master
         with:
-          branch: gh-pages
-          folder: .
-          token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
